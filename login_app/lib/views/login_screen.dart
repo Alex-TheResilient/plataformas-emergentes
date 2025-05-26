@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import '../viewmodels/login_viewmodel.dart';
 
-class LoginScreen extends StatelessWidget {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+class LoginScreen extends StatefulWidget {
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final LoginViewModel viewModel = LoginViewModel();
 
   @override
   Widget build(BuildContext context) {
@@ -13,18 +18,28 @@ class LoginScreen extends StatelessWidget {
         child: Column(
           children: [
             TextField(
-              controller: emailController,
+              onChanged: (value) => viewModel.email = value,
               decoration: InputDecoration(labelText: 'Correo electrónico'),
             ),
             TextField(
-              controller: passwordController,
+              onChanged: (value) => viewModel.password = value,
               decoration: InputDecoration(labelText: 'Contraseña'),
               obscureText: true,
             ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // Lógica de login aquí
+                if (viewModel.validateCredentials()) {
+                  final user = viewModel.getUser();
+                  // Aquí podés hacer navegación o lógica con el user
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Bienvenido ${user.email}')),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Credenciales inválidas')),
+                  );
+                }
               },
               child: Text('Ingresar'),
             ),
