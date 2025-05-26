@@ -12,15 +12,29 @@ class _LoginScreenState extends State<LoginScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<void> _login() async {
-    try {
-      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim(),
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Por favor completá ambos campos.")),
       );
+      return;
+    }
+
+    try {
+      // AUTENTICACIÓN REAL con Firebase
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      // Solo si el login fue exitoso se muestra este mensaje
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Login exitoso: ${userCredential.user?.email}")),
       );
     } catch (e) {
+      // Si hay error (usuario falso, contraseña mala, etc.)
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text("Error: $e")));
