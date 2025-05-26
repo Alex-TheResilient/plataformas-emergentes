@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../viewmodels/login_viewmodel.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -7,7 +7,25 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final LoginViewModel viewModel = LoginViewModel();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Future<void> _login() async {
+    try {
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Login exitoso: ${userCredential.user?.email}")),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error: $e")));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,31 +36,16 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Column(
           children: [
             TextField(
-              onChanged: (value) => viewModel.email = value,
-              decoration: InputDecoration(labelText: 'Correo electrónico'),
+              controller: _emailController,
+              decoration: InputDecoration(labelText: 'Correo'),
             ),
             TextField(
-              onChanged: (value) => viewModel.password = value,
+              controller: _passwordController,
               decoration: InputDecoration(labelText: 'Contraseña'),
               obscureText: true,
             ),
             SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                if (viewModel.validateCredentials()) {
-                  final user = viewModel.getUser();
-                  // Aquí podés hacer navegación o lógica con el user
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Bienvenido ${user.email}')),
-                  );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Credenciales inválidas')),
-                  );
-                }
-              },
-              child: Text('Ingresar'),
-            ),
+            ElevatedButton(onPressed: _login, child: Text('Ingresar')),
           ],
         ),
       ),
