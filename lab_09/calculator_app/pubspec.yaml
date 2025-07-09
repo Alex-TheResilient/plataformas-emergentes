@@ -1,5 +1,5 @@
 name: calculator_app
-description: "A new Flutter project."
+description: 'Calculadora con operaciones nativas'
 publish_to: 'none'
 version: 0.1.0
 
@@ -9,6 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  cupertino_icons: ^1.0.2
 
 dev_dependencies:
   flutter_test:
