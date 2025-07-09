@@ -1,7 +1,3 @@
-# calculator_app
-
-A new Flutter project.
-
 # Calculator App - Implementación de MethodChannel
 
 ## Descripción del Proyecto
